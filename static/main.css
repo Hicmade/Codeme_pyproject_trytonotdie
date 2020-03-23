@@ -1,0 +1,5 @@
+  table, th, td {
+  padding: 10px;
+  border-collapse: collapse;
+  border-style: inset;
+  }

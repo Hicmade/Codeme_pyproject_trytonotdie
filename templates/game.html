@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>TryToNotDie</title>
+</head>
+
+<b>Day: {{day_number}}</b>
+<br>
+    <br><b>Food supplies: {{food_supl}}</b>
+    <br><b>Healing herbs: {{herb_supl}}</b>
+    <br><b>Huts:          {{huts_number}}</b>
+<br>
+    <br><b>WEATHER</b>
+    <br><b>Temperature: {{actual_temperature}}</b>
+    <br><b>Rain:        {{actual_rain}}</b>
+    <br><b>Wind:        {{actual_wind}}</b>
+<br>
+<table>
+
+<table style="width:100%"
+<tr>
+    <th>{{ch1}}
+        <br>{{nam1}}
+        <br>
+        <br>Condition: {{health_1}}
+        <form method="get">
+          <input type="radio" name="action" value="act1">
+          <label for="do1">Find food!</label><br>
+            <input type="radio" name="action" value="act2">
+          <label for="do1">Get herbs!</label><br>
+            <input type="radio" name="action" value="act3">
+          <label for="do1">Construct!</label><br>
+            <input type="radio" name="action" value="act4">
+          <label for="do1">Eat herbs!</label><br>
+        </form>
+        <br>{{action1}}
+    </th>
+        <th>{{ch2}}
+            <br>{{nam2}}
+            <br>
+            <br>Condition: {{health_2}}
+        <form method="get">
+          <input type="radio" name="action" value="act1">
+          <label for="do1">Find food!</label><br>
+            <input type="radio" name="action" value="act2">
+          <label for="do1">Get herbs!</label><br>
+            <input type="radio" name="action" value="act3">
+          <label for="do1">Construct!</label><br>
+            <input type="radio" name="action" value="act4">
+          <label for="do1">Eat herbs!</label><br>
+        </form>
+            <br>{{action2}}
+    </th>
+        <th>{{ch3}}
+            <br>{{nam3}}
+            <br>
+            <br>Condition: {{health_3}}
+        <form method="get">
+          <input type="radio" name="action" value="act1">
+          <label for="do1">Find food!</label><br>
+            <input type="radio" name="action" value="act2">
+          <label for="do1">Get herbs!</label><br>
+            <input type="radio" name="action" value="act3">
+          <label for="do1">Construct!</label><br>
+            <input type="radio" name="action" value="act4">
+          <label for="do1">Eat herbs!</label><br>
+        </form>
+            <br>{{action3}}
+    </th>
+        <th>{{ch4}}
+            <br>{{nam4}}
+            <br>
+            <br>Condition: {{health_4}}
+        <form method="get">
+          <input type="radio" name="action" value="act1">
+          <label for="do1">Find food!</label><br>
+            <input type="radio" name="action" value="act2">
+          <label for="do1">Get herbs!</label><br>
+            <input type="radio" name="action" value="act3">
+          <label for="do1">Construct!</label><br>
+            <input type="radio" name="action" value="act4">
+          <label for="do1">Eat herbs!</label><br>
+        </form>
+        <br>{{action4}}
+
+</tr>
+</table>
+<br>
+<center><input type="submit" value="Next day!"></center>
+</br>
+</body>
+</html>
+{% endblock %}

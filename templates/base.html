@@ -1,0 +1,15 @@
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
+<body>
+<p>Menu:
+    <a href="/">Reset</a>
+    <a href="/save">Save</a>
+    <a href="/load">Load</a>
+</p>
+
+<hr>
+</body>
+
+{% block page_content %}
+{% endblock %}
