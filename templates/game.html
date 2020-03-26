@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>TryToNotDie</title>
+</head>
+
+<b>Day: {{day_number}}</b>
+<br>
+    <br><b>Food supplies: {{food_supl}}</b>
+    <br><b>Healing herbs: {{herb_supl}}</b>
+    <br><b>Huts:          {{huts_number}}</b>
+<br>
+    <br><b>WEATHER</b>
+    <br><b>Temperature: {{temp}}</b>
+    <br><b>Rain:        {{rain}}</b>
+    <br><b>Wind:        {{wind}}</b>
+<br>
+</table>
+<br>
+
+<form method="post" action="/game">
+    <table style="width:100%">
+    <tr>
+        {% for c in ch %}
+        <th>{{c.ch_n}}
+            <br>{{c.ch_o}}
+            <br>
+            <br>Condition: {{c.ch_hp}}
+            <br>
+              <input type="radio" name="action{{loop.index}}" value="act1">
+              <label>Find food!</label><br>
+                <input type="radio" name="action{{loop.index}}" value="act2">
+              <label>Get herbs!</label><br>
+                <input type="radio" name="action{{loop.index}}" value="act3">
+              <label>Construct!</label><br>
+                <input type="radio" name="action{{loop.index}}" value="act4">
+              <label>Eat herbs!</label><br>
+            {% if action %}
+            <br>{{action}}
+            {% endif %}
+        </th>
+        {% endfor %}
+    </tr>
+    </table>
+    <br>
+    <center><input type="submit" value="Next day!"></center>
+</form>
+</br>
+</body>
+</html>
+{% endblock %}
