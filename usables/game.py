@@ -11,10 +11,10 @@ class GameControl:
             'temp': 20,
             'rain_txt': 'Clear sky',
             'wind_txt': 'No wind',
-            'day_number': 1,
+            'day': 1,
             'food_supl': 0,
             'herb_supl': 0,
-            'huts_number': 0,
+            'huts': 0,
             'rain': 0,
             'wind': 0
         }
@@ -37,7 +37,7 @@ class GameControl:
                 ch = Character(occ_set[i])
                 i += 1
 
-            ch_dat = {"ch_n": ch.ch_name, "ch_o": ch.ch_occupation, "ch_hp": ch.this_char['HP']}
+            ch_dat = {"Ch_name": ch.ch_name, "Ch_occupation": ch.ch_occupation, "Ch_HP": ch.this_char['HP']}
             characters.append(ch_dat)
 
         return characters

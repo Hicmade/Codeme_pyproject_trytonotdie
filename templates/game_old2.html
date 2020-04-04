@@ -28,6 +28,9 @@
     <table style="width:100%">
     <tr>
         {% for c in ch %}
+        <input type="hidden" name="ch{{loop.index}}_n" value="{{c.ch_n}}">
+        <input type="hidden" name="ch{{loop.index}}_o" value={{c.ch_o}}>
+        <input type="hidden" name="ch{{loop.index}}_hp" value={{c.ch_hp}}>
 
         <th>{{c.Ch_name}}
             <br>{{c.Ch_occupation}}
@@ -50,7 +53,16 @@
     </tr>
     </table>
     <br>
-    <input type="hidden" name="GameID" value={{GameID}}>
+    <input type="hidden" name="day_number" value={{day_number}}>
+    <input type="hidden" name="food_supl" value={{food_supl}}>
+    <input type="hidden" name="herb_supl" value={{herb_supl}}>
+    <input type="hidden" name="huts_number" value={{huts_number}}>
+    <input type="hidden" name="temp" value={{temp}}>
+    <input type="hidden" name="rain_txt" value="{{rain_txt}}">
+    <input type="hidden" name="wind_txt" value="{{wind_txt}}">
+    <input type="hidden" name="rain" value={{rain}}>
+    <input type="hidden" name="wind" value={{wind}}>
+    <input type="hidden" name="ch_number" value={{ch_number}}>
     <center><input type="submit" value="Next day!"></center>
 </form>
 
