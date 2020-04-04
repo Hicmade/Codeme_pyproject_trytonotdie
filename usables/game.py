@@ -4,42 +4,43 @@ import math
 
 class GameControl:
 
-    """
-    howmany = 4
-    character_occupation = ["doctor", "ranger", "engineer", "influencer"]
-    character_set = {"ch1": None,
-                     "ch2": None,
-                     "ch3": None,
-                     "ch4": None,}
-    character_names = ["Glados", "Brajanusz", "Kira", "Calypso", "Drake", "Sasha"]
-    character_surnames = ["McFly", "Croft", "Python", "Li", "Codeyou", "Grey"]
-    names_set = []
-
-    def default_character_set(self, co=character_occupation):
-        i = 0
-        for key, value in self.character_set.items():
-            self.character_set[key] = co[i]
-            i += 1
-        return self.character_set
-
-    def character_names(self, hm=howmany, chn=character_names, chs=character_surnames):
-        name_keys = []
-        for i in range(hm):
-            name_keys.append("nam"+str(i+1))
-            self.names_set.append(random.choice(chn)+" "+random.choice(chs))
-        result = dict(zip(name_keys, self.names_set))
-        return result
-    """
 
     @staticmethod
-    def get_initial_weather():
-        init_weather = {
+    def get_initial_conditions():
+        init_conditions = {
             'temp': 20,
-            'rain': 'Clear sky',
-            'wind': 'No'
+            'rain_txt': 'Clear sky',
+            'wind_txt': 'No wind',
+            'day_number': 1,
+            'food_supl': 0,
+            'herb_supl': 0,
+            'huts_number': 0,
+            'rain': 0,
+            'wind': 0
         }
 
-        return init_weather
+        return init_conditions
+
+    @staticmethod
+    def get_new_characters(number=4, randomly=False):
+        occ_set = ['doc', 'ran', 'eng', 'inf']
+        characters = []
+        i = 0
+
+        for x in range(number):
+            if i > len(occ_set)-1:
+                i = 0
+            if randomly:
+                ch = Character(random.choice(occ_set))
+
+            else:
+                ch = Character(occ_set[i])
+                i += 1
+
+            ch_dat = {"ch_n": ch.ch_name, "ch_o": ch.ch_occupation, "ch_hp": ch.this_char['HP']}
+            characters.append(ch_dat)
+
+        return characters
 
     @staticmethod
     def get_weather(temp):
@@ -152,7 +153,8 @@ class Character:
         self.ch_name = random.choice(self.character_names) + " " + random.choice(self.character_surnames)
 
     def bring_food(self):
-        result = (random.randint(1, self.basic_food_gather)) * self.this_char['hunt_eff']
+        my_val = (random.randint(1, self.basic_food_gather)) * self.this_char['hunt_eff']
+        result = {'food': my_val}
         return result
 
     def bring_herbs(self):
@@ -196,14 +198,5 @@ class Character:
 
 
 if __name__ == "__main__":
-    # g = GameControl()
-    c = Character('inf')
-    print(c.this_char)
-    print(c.ch_name)
-    c.next_day_effect(30, 0, 0, 1, 5)
-    print(c.this_char)
-    print(c.bring_food())
-    print(c.bring_herbs())
-    print(c.construct_hut())
-    print(c.eat_herbs(5))
-    print(c.this_char)
+    a = GameControl.get_new_characters(number=3, randomly=True)
+    print(a)

@@ -41,36 +41,42 @@ def main_html():
     return render_template('game_old.html', **context)
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def main_try():
-    day = {"day_number": 1}
-    resources = {"food_supl": 0, "herb_supl": 0, "huts_number": 0}
-    weather = GameControl().get_initial_weather()
+    conditions = {}
+    characters = {}
 
-    ch1 = Character('doc')
-    ch2 = Character('ran')
-    ch3 = Character('eng')
-    ch4 = Character('inf')
-    ch5 = Character('eng')
+    if request.method == 'GET':
+        conditions = GameControl().get_initial_conditions()
+        characters = GameControl().get_new_characters()
+        ch_number = {"ch_number": len(characters)}
 
-    characters = [
-        {"ch_n": ch1.ch_name, "ch_o": ch1.ch_occupation, "ch_hp": ch1.this_char['HP']},
-        {"ch_n": ch2.ch_name, "ch_o": ch2.ch_occupation, "ch_hp": ch2.this_char['HP']},
-        {"ch_n": ch3.ch_name, "ch_o": ch3.ch_occupation, "ch_hp": ch3.this_char['HP']},
-        {"ch_n": ch4.ch_name, "ch_o": ch4.ch_occupation, "ch_hp": ch4.this_char['HP']},
-        {"ch_n": ch5.ch_name, "ch_o": ch5.ch_occupation, "ch_hp": ch5.this_char['HP']}
-    ]
+    elif request.method == 'POST':
+        data = request.form
+        weather = GameControl.get_weather(data['temp'])
+        day = {'day_number': data['day_number'] + 1}
+
+        """for x in data:
+            if x.key == "action"""
+
+
 
     context = {}
-    context.update(day)
-    context.update(resources)
-    context.update(weather)
+    context.update(conditions)
+    context.update(ch_number)
 
     return render_template('game.html', **context, ch=characters)
 
 
 @app.route("/game", methods=['get', 'post'])
 def game():
+    raw_data = request.form
+    data = raw_data.to_dict()
+    print(data)
+    for key, value in data.items:
+        print(key)
+
+
 
     try1 = request.form.get('action1')
     try2 = request.form.get('action2')
@@ -82,7 +88,7 @@ def game():
         {"akcja1": try3, "status": "udalo sie"},
         {"akcja1": try4, "status": "udalo sie"}
     ]
-    return render_template('game.html', items=items)
+    return render_template('game.html', temp=data)
 
 
 if __name__ == "__main__":

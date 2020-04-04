@@ -9,6 +9,7 @@
     <title>TryToNotDie</title>
 </head>
 
+<body>
 <b>Day: {{day_number}}</b>
 <br>
     <br><b>Food supplies: {{food_supl}}</b>
@@ -17,16 +18,20 @@
 <br>
     <br><b>WEATHER</b>
     <br><b>Temperature: {{temp}}</b>
-    <br><b>Rain:        {{rain}}</b>
-    <br><b>Wind:        {{wind}}</b>
+    <br><b>Rain:        {{rain_txt}}</b>
+    <br><b>Wind:        {{wind_txt}}</b>
 <br>
-</table>
+
 <br>
 
 <form method="post" action="/game">
     <table style="width:100%">
     <tr>
         {% for c in ch %}
+        <input type="hidden" name="ch{{loop.index}}_n" value="{{c.ch_n}}">
+        <input type="hidden" name="ch{{loop.index}}_o" value={{c.ch_o}}>
+        <input type="hidden" name="ch{{loop.index}}_hp" value={{c.ch_hp}}>
+
         <th>{{c.ch_n}}
             <br>{{c.ch_o}}
             <br>
@@ -48,9 +53,19 @@
     </tr>
     </table>
     <br>
+    <input type="hidden" name="day_number" value={{day_number}}>
+    <input type="hidden" name="food_supl" value={{food_supl}}>
+    <input type="hidden" name="herb_supl" value={{herb_supl}}>
+    <input type="hidden" name="huts_number" value={{huts_number}}>
+    <input type="hidden" name="temp" value={{temp}}>
+    <input type="hidden" name="rain_txt" value="{{rain_txt}}">
+    <input type="hidden" name="wind_txt" value="{{wind_txt}}">
+    <input type="hidden" name="rain" value={{rain}}>
+    <input type="hidden" name="wind" value={{wind}}>
+    <input type="hidden" name="ch_number" value={{ch_number}}>
     <center><input type="submit" value="Next day!"></center>
 </form>
-</br>
+
 </body>
 </html>
 {% endblock %}
