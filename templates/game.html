@@ -24,7 +24,7 @@
 
 <br>
 
-<form method="post" action="/game">
+<form method="post" action="/">
     <table style="width:100%">
     <tr>
         {% for c in ch %}
@@ -34,7 +34,7 @@
             <br>
             <br>Condition: {{c.Ch_HP}}
             <br>
-              <input type="radio" name="action{{loop.index}}" value="act1">
+              <input type="radio" name="action{{loop.index}}" value="act1" checked="checked">
               <label>Find food!</label><br>
                 <input type="radio" name="action{{loop.index}}" value="act2">
               <label>Get herbs!</label><br>

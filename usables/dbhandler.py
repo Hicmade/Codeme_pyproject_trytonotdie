@@ -35,7 +35,7 @@ class GameDatabase:
 
     @staticmethod
     def get_gamedata(game_id):
-        conn = sqlite3.connect('game_data.db')
+        conn = sqlite3.connect('./usables/game_data.db')
         c = conn.cursor()
         query = """
         SELECT * FROM GameSave WHERE ID = ?
@@ -43,7 +43,8 @@ class GameDatabase:
         c.execute(query, (game_id,))
         conn.commit()
 
-        result = c.fetchall()
+        values = c.fetchall()
+        result = dict(zip([c[0] for c in c.description], values[0]))
 
         conn.close()
 
@@ -54,7 +55,7 @@ class GameDatabase:
         conn = sqlite3.connect('./usables/game_data.db')
         c = conn.cursor()
         query = """
-        INSERT INTO CharacterSet VALUES (:GameID, :Ch_name, :Ch_occupation, :Ch_HP)
+        INSERT INTO CharacterSet VALUES (NULL, :GameID, :Ch_name, :Ch_occupation, :Ch_HP)
         """
 
         for x in chs:
@@ -68,7 +69,7 @@ class GameDatabase:
 
     @staticmethod
     def get_character_set(game_id):
-        conn = sqlite3.connect('game_data.db')
+        conn = sqlite3.connect('./usables/game_data.db')
         c = conn.cursor()
         query = """
         SELECT * FROM CharacterSet WHERE GameID = ?
@@ -76,11 +77,45 @@ class GameDatabase:
         c.execute(query, (game_id,))
         conn.commit()
 
-        result = c.fetchall()
+        list_of_values = c.fetchall()
+        result = []
+        for x in list_of_values:
+            my_dict = dict(zip([c[0] for c in c.description], x))
+            result.append(my_dict)
 
         conn.close()
 
         return result
+
+    @staticmethod
+    def update_character_set(chs):
+        conn = sqlite3.connect('./usables/game_data.db')
+        c = conn.cursor()
+        query = """
+        UPDATE CharacterSet SET CH_HP = :Ch_HP WHERE GAMEID = :GameID AND CH_NO = :Ch_no
+        """
+
+        c.executemany(query, chs)
+        conn.commit()
+
+        conn.close()
+
+    @staticmethod
+    def update_gamedata(data):
+
+        conn = sqlite3.connect('./usables/game_data.db')
+        c = conn.cursor()
+        query = """
+        UPDATE GameSave SET DAY = :day, FOOD_SUPL = :food_supl, HERB_SUPL = :herb_supl, HUTS = :huts, TEMP = :temp, 
+        RAIN = :rain, RAIN_TXT = :rain_txt, WIND = :wind, 
+        WIND_TXT = :wind_txt WHERE ID = :ID
+        """
+
+        c.executemany(query, (data,))
+        conn.commit()
+
+        conn.close()
+
 
 if __name__ == "__main__":
     GameDatabase.get_character_set(3)

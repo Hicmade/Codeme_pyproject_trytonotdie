@@ -23,7 +23,7 @@ class GameControl:
 
     @staticmethod
     def get_new_characters(number=4, randomly=False):
-        occ_set = ['doc', 'ran', 'eng', 'inf']
+        occ_set = ['Doctor', 'Ranger', 'Engineer', 'Influencer']
         characters = []
         i = 0
 
@@ -143,7 +143,7 @@ class Character:
     max_huts = 4
 
     def __init__(self, occup, hp=_HP_max):
-        choices = {'doc': self.t_doc, 'ran': self.t_ran, 'eng': self.t_eng, 'inf': self.t_inf}
+        choices = {'Doctor': self.t_doc, 'Ranger': self.t_ran, 'Engineer': self.t_eng, 'Influencer': self.t_inf}
         self.this_char = choices.get(occup, "something went wrong")
         self.ch_occupation = self.this_char['occupation']
         self.this_char['HP'] = hp
@@ -153,31 +153,35 @@ class Character:
         self.ch_name = random.choice(self.character_names) + " " + random.choice(self.character_surnames)
 
     def bring_food(self):
-        my_val = (random.randint(1, self.basic_food_gather)) * self.this_char['hunt_eff']
-        result = {'food': my_val}
+        result = (random.randint(1, self.basic_food_gather)) * self.this_char['hunt_eff']
         return result
 
     def bring_herbs(self):
         result = (random.randint(1, self.basic_herb_gather)) * self.this_char['gather']
         return result
 
-    def construct_hut(self):
-        result = self.basic_fix_construct * self.this_char['fix_constr']
+    def construct_hut(self, now_huts):
+        result = self.basic_fix_construct * self.this_char['fix_constr'] + now_huts
         if result > self.max_huts:
             result = self.max_huts
         return result
 
-    def eat_herbs(self, herbs):
+    def eat_herbs(self, herbs, hp):
         amount_eaten = 2
 
         if herbs < 2:
             amount_eaten = herbs
 
-        result = herbs - amount_eaten
+        new_herbs = herbs - amount_eaten
 
-        self.this_char['HP'] += self.this_char['health_reg']*amount_eaten
+        self.this_char['HP'] = hp + self.this_char['health_reg']*amount_eaten
         if self.this_char['HP'] > 100:
             self.this_char['HP'] = 100
+
+        result = {
+            'herbs': new_herbs,
+            'HP': self.this_char['HP']
+        }
 
         return result
 
@@ -198,5 +202,5 @@ class Character:
 
 
 if __name__ == "__main__":
-    a = GameControl.get_new_characters(number=3, randomly=True)
+    a = GameControl.get_weather(5)
     print(a)

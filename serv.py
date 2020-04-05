@@ -10,34 +10,54 @@ app = Flask(__name__)
 def main_try():
     conditions = {}
     characters = {}
+    gameid = None
 
     if request.method == 'GET':
         conditions = GameControl().get_initial_conditions()
         characters = GameControl().get_new_characters()
-        game_id = {'GameID': GameDatabase.input_gamedata(conditions)}
-        GameDatabase.input_character_set(characters, game_id)
+        gameid = {'GameID': GameDatabase.input_gamedata(conditions)}
+        conditions.update(gameid)
+        GameDatabase.input_character_set(characters, gameid)
 
-    #All below, not working yet...
     elif request.method == 'POST':
-        GameID = request.form.get('GameID')
-        db_game = GameDatabase.get_gamedata(GameID)
-        db_ch = GameDatabase.get_character_set(GameID)
-        #continue here...
-        weather = GameControl.get_weather(data['temp'])
-        day = {'day_number': data['day_number'] + 1}
-        actions = []
+        gameid_from_html = request.form.get('GameID')
+        gameid = {'GameID': gameid_from_html}
+        data = request.form.to_dict()
+        db_game = GameDatabase.get_gamedata(gameid_from_html)
+        db_ch = GameDatabase.get_character_set(gameid_from_html)
+        weather = GameControl.get_weather(db_game['temp'])
+        db_game.update(weather)
+        day = {'day': db_game['day'] + 1}
+        db_game.update(day)
 
+        i = 0
         for key, value in data.items():
             if 'action' in key:
                 if value == 'act1':
-                    r = Character().bring_food()
-                    data['food_supl'] += r
+                    c = Character(db_ch[i]['Ch_occupation'])
+                    r = c.bring_food()
+                    db_game['food_supl'] += r
+                elif value == 'act2':
+                    r = Character(db_ch[i]['Ch_occupation']).bring_herbs()
+                    db_game['herb_supl'] += r
+                elif value == 'act3':
+                    r = Character(db_ch[i]['Ch_occupation']).construct_hut(db_game['huts'])
+                    db_game['huts'] = r
+                elif value == 'act4':
+                    r = Character(occup=db_ch[i]['Ch_occupation'], hp=db_ch[i]['Ch_HP']).eat_herbs(db_game['herbs'],
+                                                                                                   db_ch[i]['HP'])
+                    db_game['herb_supl'] = r['herbs']
+                    db_ch[i]['HP'] = r['HP']
+                i += 1
 
-        print(actions)
+        GameDatabase.update_gamedata(db_game)
+        GameDatabase.update_character_set(db_ch)
+        conditions.update(db_game)
+        conditions.update(gameid)
+        characters = db_ch
 
     context = {}
     context.update(conditions)
-    context.update(game_id)
 
     return render_template('game.html', **context, ch=characters)
 
@@ -51,8 +71,6 @@ def game():
     for key in data:
         if 'action' in key:
             print(key)
-
-
 
     try1 = request.form.get('action1')
     try2 = request.form.get('action2')
