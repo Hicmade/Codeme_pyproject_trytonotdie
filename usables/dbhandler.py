@@ -38,9 +38,10 @@ class GameDatabase:
         conn = sqlite3.connect('./usables/game_data.db')
         c = conn.cursor()
         query = """
-        SELECT * FROM GameSave WHERE ID = ?
+        SELECT * FROM GameSave WHERE ID = :ID
         """
-        c.execute(query, (game_id,))
+        gameid = {'ID': game_id}
+        c.execute(query, gameid)
         conn.commit()
 
         values = c.fetchall()
@@ -72,9 +73,10 @@ class GameDatabase:
         conn = sqlite3.connect('./usables/game_data.db')
         c = conn.cursor()
         query = """
-        SELECT * FROM CharacterSet WHERE GameID = ?
+        SELECT * FROM CharacterSet WHERE GameID = :GameID
         """
-        c.execute(query, (game_id,))
+        gameid = {'GameID': game_id}
+        c.execute(query, gameid)
         conn.commit()
 
         list_of_values = c.fetchall()

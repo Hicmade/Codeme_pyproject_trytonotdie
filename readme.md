@@ -29,7 +29,11 @@ oraz warunki atmosferyczne: wiatr, deszcz. Zbyt wysoka lub zbyt niska temperatur
 życia postaci przy uwzględnieniu jej osobistej odporności. Tak samo silne wiatry lub silne deszcze zwiększają ubytek 
 punktów zdrowia.
 
-Gra na każdym eteapie wyświelania treści html pobiera aktualny stan (tj. wszystkie niezbędne parametry) z bazy danych
+Schronienia łagodzą skutki złych warunków atmosferycznych proporcjonalnie do ilości wybudowanych schornień. Dodatkowo 
+silne wiatry lub deszcze niszczą systematycznie schornienia, które można odbudować przydzielając właściwą akcję do 
+wykonania postaci.
+
+Gra na każdym etapie wyświelania treści html pobiera aktualny stan (tj. wszystkie niezbędne parametry) z bazy danych
 identyfikując dane po unikalnym ID gry oraz uaktualnia ten rekord.
 
 Dodatkowe informacje

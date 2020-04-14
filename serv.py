@@ -16,50 +16,70 @@ def main_try():
         conditions = GameControl().get_initial_conditions()
         characters = GameControl().get_new_characters()
         gameid = {'GameID': GameDatabase.input_gamedata(conditions)}
-        conditions.update(gameid)
         GameDatabase.input_character_set(characters, gameid)
 
     elif request.method == 'POST':
-        gameid_from_html = request.form.get('GameID')
-        gameid = {'GameID': gameid_from_html}
+        # Gets game conditions and characters refering to GameID
         data = request.form.to_dict()
-        db_game = GameDatabase.get_gamedata(gameid_from_html)
-        db_ch = GameDatabase.get_character_set(gameid_from_html)
-        weather = GameControl.get_weather(db_game['temp'])
-        db_game.update(weather)
-        day = {'day': db_game['day'] + 1}
-        db_game.update(day)
+        gameid = {'GameID': data['GameID']}
+        db_game = GameDatabase.get_gamedata(gameid['GameID'])
+        db_ch = GameDatabase.get_character_set(gameid['GameID'])
 
+        # Calculates new day
+        weather = GameControl.get_weather(db_game)
+        conditions.update(weather)
+
+        # Calculates supplies
+        supplies = {
+            'food_supl': db_game['food_supl'],
+            'herb_supl': db_game['herb_supl'],
+            'huts': db_game['huts']
+        }
         i = 0
         for key, value in data.items():
             if 'action' in key:
                 if value == 'act1':
                     c = Character(db_ch[i]['Ch_occupation'])
                     r = c.bring_food()
-                    db_game['food_supl'] += r
+                    supplies['food_supl'] += r
                 elif value == 'act2':
-                    r = Character(db_ch[i]['Ch_occupation']).bring_herbs()
-                    db_game['herb_supl'] += r
+                    c = Character(db_ch[i]['Ch_occupation'])
+                    r = c.bring_herbs()
+                    supplies['herb_supl'] += r
                 elif value == 'act3':
-                    r = Character(db_ch[i]['Ch_occupation']).construct_hut(db_game['huts'])
-                    db_game['huts'] = r
+                    c = Character(db_ch[i]['Ch_occupation'])
+                    r = c.construct_hut(supplies['huts'])
+                    supplies['huts'] = r
                 elif value == 'act4':
-                    r = Character(occup=db_ch[i]['Ch_occupation'], hp=db_ch[i]['Ch_HP']).eat_herbs(db_game['herbs'],
-                                                                                                   db_ch[i]['HP'])
-                    db_game['herb_supl'] = r['herbs']
-                    db_ch[i]['HP'] = r['HP']
+                    c = Character(occup=db_ch[i]['Ch_occupation'], hp=db_ch[i]['Ch_HP'])
+                    r = c.eat_herbs(supplies['herb_supl'])
+                    supplies['herb_supl'] = r['herbs']
+                    db_ch[i]['Ch_HP'] = r['HP']
                 i += 1
+
+        # Characters next day effect
+        i = 0
+        for x in db_ch:
+            c = Character(occup=x['Ch_occupation'], hp=x['Ch_HP'])
+            r = c.next_day_effect(temp=weather['temp'], rain=weather['rain'], wind=weather['wind'],
+                              huts=supplies['huts'], food=supplies['food_supl'])
+            db_ch[i].update({'Ch_HP': r})
+            i += 1
+
+
+        db_game.update(weather)
+        db_game.update(supplies)
 
         GameDatabase.update_gamedata(db_game)
         GameDatabase.update_character_set(db_ch)
+
         conditions.update(db_game)
-        conditions.update(gameid)
         characters = db_ch
 
     context = {}
     context.update(conditions)
 
-    return render_template('game.html', **context, ch=characters)
+    return render_template('game.html', **context, ch=characters, GameID=gameid['GameID'])
 
 
 @app.route("/game", methods=['get', 'post'])

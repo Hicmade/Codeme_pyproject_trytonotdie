@@ -43,7 +43,7 @@ class GameControl:
         return characters
 
     @staticmethod
-    def get_weather(temp):
+    def get_weather(db_game):
         max_change = 10
         min_temp = 0
         max_temp = 40
@@ -57,8 +57,8 @@ class GameControl:
             {"wind_txt": "Windy", "wind": 2},
             {"wind_txt": "Very windy", "wind": 3}
         ]
-
-        calculated_temp = random.randint(temp-max_change, temp+max_change)
+        calculated_day = db_game['day'] + 1
+        calculated_temp = random.randint(db_game['temp']-max_change, db_game['temp']+max_change)
         if calculated_temp < min_temp:
             calculated_temp = min_temp
         elif calculated_temp > max_temp:
@@ -72,7 +72,8 @@ class GameControl:
             'rain': calculated_rain['rain'],
             'wind': calculated_wind['wind'],
             'rain_txt': calculated_rain['rain_txt'],
-            'wind_txt': calculated_wind['wind_txt']
+            'wind_txt': calculated_wind['wind_txt'],
+            'day': calculated_day
         }
 
         return weather
@@ -166,7 +167,7 @@ class Character:
             result = self.max_huts
         return result
 
-    def eat_herbs(self, herbs, hp):
+    def eat_herbs(self, herbs):
         amount_eaten = 2
 
         if herbs < 2:
@@ -174,7 +175,7 @@ class Character:
 
         new_herbs = herbs - amount_eaten
 
-        self.this_char['HP'] = hp + self.this_char['health_reg']*amount_eaten
+        self.this_char['HP'] += round(self.this_char['health_reg']*amount_eaten)
         if self.this_char['HP'] > 100:
             self.this_char['HP'] = 100
 
@@ -197,10 +198,13 @@ class Character:
         if food < self.this_char['food_cons']:
             food_factor = self.this_char['food_cons'] - food
 
-        self.this_char['HP'] -= ((temp_factor * self.this_char['cold_proof']) + rain + wind + food_factor - huts) * \
-            self.this_char['health_los']
+        self.this_char['HP'] -= round(((temp_factor * self.this_char['cold_proof']) + rain + wind + food_factor - huts) * \
+            self.this_char['health_los'])
+
+        return self.this_char['HP']
 
 
 if __name__ == "__main__":
-    a = GameControl.get_weather(5)
+    a = GameControl()
+
     print(a)
