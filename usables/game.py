@@ -1,9 +1,9 @@
 import random
 import math
+import copy
 
 
 class GameControl:
-
 
     @staticmethod
     def get_initial_conditions():
@@ -77,6 +77,81 @@ class GameControl:
         }
 
         return weather
+
+    @staticmethod
+    def get_next_day(db_game, db_ch, data):
+        # Calculates new day
+        conditions = {}
+        weather = GameControl.get_weather(db_game)
+        conditions.update(weather)
+
+        # Calculates supplies
+        supplies = {
+            'food_supl': db_game['food_supl'],
+            'herb_supl': db_game['herb_supl'],
+            'huts': db_game['huts']
+        }
+
+        # - from characters
+        i = 0
+        characters = []
+        for key, value in data.items():
+            if 'action' in key:
+                if value == 'act1':
+                    c = Character(db_ch[i]['Ch_occupation'])
+                    r = c.bring_food()
+                    supplies['food_supl'] += r
+                    d = copy.deepcopy(db_ch[i])
+                    d.update({'act_txt': f'I found {r} portions of food!'})
+                    characters.append(d)
+                elif value == 'act2':
+                    c = Character(db_ch[i]['Ch_occupation'])
+                    r = c.bring_herbs()
+                    supplies['herb_supl'] += r
+                    d = copy.deepcopy(db_ch[i])
+                    d.update({'act_txt': f'I brought {r} herbs!'})
+                    characters.append(d)
+                elif value == 'act3':
+                    c = Character(db_ch[i]['Ch_occupation'])
+                    r = c.construct_hut(supplies['huts'])
+                    supplies['huts'] = r
+                    d = copy.deepcopy(db_ch[i])
+                    d.update({'act_txt': f'I raised about {r*100}% of hut!'})
+                    characters.append(d)
+                elif value == 'act4':
+                    c = Character(occup=db_ch[i]['Ch_occupation'], hp=db_ch[i]['Ch_HP'])
+                    r = c.eat_herbs(supplies['herb_supl'])
+                    supplies['herb_supl'] = r['herbs']
+                    db_ch[i]['Ch_HP'] = r['HP']
+                    d = copy.deepcopy(db_ch[i])
+                    d.update({'act_txt': f'I healed myself!'})
+                    characters.append(d)
+                i += 1
+
+        # Characters next day effect
+        i = 0
+        for x in db_ch:
+            c = Character(occup=x['Ch_occupation'], hp=x['Ch_HP'])
+            if x['Ch_HP'] > 0:
+                r = c.next_day_effect(temp=weather['temp'], rain=weather['rain'], wind=weather['wind'],
+                                      huts=supplies['huts'], food=supplies['food_supl'])
+                db_ch[i].update({'Ch_HP': r})
+
+                # food consumption
+                supplies['food_supl'] -= round(c.this_char['food_cons'])
+                if supplies['food_supl'] < 0:
+                    supplies['food_supl'] = 0
+            else:
+                characters[i].update({'act_txt': 'I am dead!'})
+
+            i += 1
+
+        db_game.update(weather)
+        db_game.update(supplies)
+
+        result = [db_game, db_ch, conditions, characters]
+
+        return result
 
 
 class Character:
@@ -198,8 +273,8 @@ class Character:
         if food < self.this_char['food_cons']:
             food_factor = self.this_char['food_cons'] - food
 
-        self.this_char['HP'] -= round(((temp_factor * self.this_char['cold_proof']) + rain + wind + food_factor - huts) * \
-            self.this_char['health_los'])
+        self.this_char['HP'] -= round(((temp_factor * self.this_char['cold_proof']) + rain + wind +
+                                       food_factor - huts) * self.this_char['health_los'])
 
         return self.this_char['HP']
 

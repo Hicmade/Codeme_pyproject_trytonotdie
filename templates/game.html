@@ -32,6 +32,7 @@
         <th>{{c.Ch_name}}
             <br>{{c.Ch_occupation}}
             <br>
+            {% if c.act_txt != "I am dead!"%}
             <br>Condition: {{c.Ch_HP}}
             <br>
               <input type="radio" name="action{{loop.index}}" value="act1" checked="checked">
@@ -42,8 +43,10 @@
               <label>Construct!</label><br>
                 <input type="radio" name="action{{loop.index}}" value="act4">
               <label>Eat herbs!</label><br>
-            {% if action %}
-            <br>{{action}}
+            {% endif%}
+
+            {% if c.act_txt %}
+                <br>{{c.act_txt}}
             {% endif %}
         </th>
         {% endfor %}
