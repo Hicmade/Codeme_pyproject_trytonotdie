@@ -126,6 +126,11 @@ class GameControl:
                     d = copy.deepcopy(db_ch[i])
                     d.update({'act_txt': f'I healed myself!'})
                     characters.append(d)
+                elif value == 'dead':
+                    d = copy.deepcopy(db_ch[i])
+                    d.update({'act_txt': f'I am dead!'})
+                    characters.append(d)
+
                 i += 1
 
         # Characters next day effect

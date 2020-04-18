@@ -43,6 +43,8 @@
               <label>Construct!</label><br>
                 <input type="radio" name="action{{loop.index}}" value="act4">
               <label>Eat herbs!</label><br>
+            {% else %}
+                <input type="hidden" name="action{{loop.index}}" value="dead">
             {% endif%}
 
             {% if c.act_txt %}
