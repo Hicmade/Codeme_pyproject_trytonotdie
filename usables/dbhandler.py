@@ -118,6 +118,32 @@ class GameDatabase:
 
         conn.close()
 
+    @staticmethod
+    def save_game(data):
+        conn = sqlite3.connect('./usables/game_data.db')
+        c = conn.cursor()
+        query = """
+                SELECT * FROM Users WHERE User_id = :user_id AND User_pass = :user_pass
+                """
+        c.execute(query, data)
+        conn.commit()
+        res = c.fetchall()
+
+        if len(res) == 0:
+            query = """
+            INSERT INTO Users VALUES (NULL, :user_id, :user_pass, :game_id)
+            """
+            c.execute(query, data)
+            conn.commit()
+        else:
+            query = """
+            UPDATE Users SET GAME_ID = :game_id WHERE USER_ID = :user_id, USER_PASS = :user_pass
+            """
+            c.execute(query, data)
+            conn.commit()
+
+        conn.close()
+
 
 if __name__ == "__main__":
     GameDatabase.get_character_set(3)

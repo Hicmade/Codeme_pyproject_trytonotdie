@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, get_flashed_messages, \
+    make_response
 from usables.game import GameControl, Character
 from usables.dbhandler import GameDatabase
 
@@ -7,7 +8,7 @@ app = Flask(__name__)
 
 
 @app.route('/', methods=['GET', 'POST'])
-def main_try():
+def game():
     conditions = {}
     characters = {}
     gameid = None
@@ -21,7 +22,8 @@ def main_try():
     elif request.method == 'POST':
         # Gets game conditions and characters referring to GameID
         data = request.form.to_dict()
-        gameid = {'GameID': data['GameID']}
+        # gameid = {'GameID': data['GameID']} - obsolete, delete if working
+        gameid = {'GameID' : request.cookies.get('cookie_game_id')}
         db_game = GameDatabase.get_gamedata(gameid['GameID'])
         db_ch = GameDatabase.get_character_set(gameid['GameID'])
 
@@ -39,31 +41,58 @@ def main_try():
     context = {}
     context.update(conditions)
 
-    return render_template('game.html', **context, ch=characters, GameID=gameid['GameID'])
+    response = make_response(render_template('game.html', **context, ch=characters, GameID=gameid['GameID']))
+    response.set_cookie('cookie_game_id', gameid)
+    return response
 
 
-@app.route("/game", methods=['get', 'post'])
-def game():
+@app.route("/save", methods=['get', 'post'])
+def save():
+    if request.method == 'GET':
+        messages = get_flashed_messages()
+        return render_template('save.html', messages=messages)
 
-    raw_data = request.form
-    data = raw_data.to_dict()
-    print(data)
-    for key in data:
-        if 'action' in key:
-            print(key)
+    if request.method == 'POST':
+        gamename = request.form['save_name']
+        password = request.form['save_pass']
+        gameid = request.cookies.get('cookie_game_id')
 
-    try1 = request.form.get('action1')
-    try2 = request.form.get('action2')
-    try3 = request.form.get('action3')
-    try4 = request.form.get('action4')
-    items = [
-        {"akcja1": try1, "status": "udalo sie"},
-        {"akcja1": try2, "status": "udalo sie"},
-        {"akcja1": try3, "status": "udalo sie"},
-        {"akcja1": try4, "status": "udalo sie"}
-    ]
-    return render_template('game.html', temp=data)
+        conditions = GameDatabase.get_gamedata(gameid)
+        characters = GameDatabase.get_character_set(gameid)
+        newgameid = {'GameID': GameDatabase.input_gamedata(conditions)}
+        GameDatabase.input_character_set(characters, newgameid)
 
+        credentials = {'user_id': gamename, 'user_pass': password, 'game_id' : newgameid}
+        GameDatabase.save_game(credentials)
+
+        response = make_response(redirect(url_for('game')))
+        response.set_cookie('cookie_game_id', newgameid)
+
+        return response
+
+# from here!
+@app.route("/load", methods=['get', 'post'])
+def save():
+    if request.method == 'GET':
+        messages = get_flashed_messages()
+        return render_template('load.html', messages=messages)
+
+    if request.method == 'POST':
+        gamename = request.form['save_name']
+        password = request.form['save_pass']
+        credentials = {'user_id' : gamename, 'user_pass' : password}
+        gameid = request.cookies.get('cookie_game_id')
+
+        conditions = GameDatabase.get_gamedata(gameid)
+        conditions.update(credentials)
+        characters = GameDatabase.get_character_set(gameid)
+        newgameid = {'GameID': GameDatabase.input_gamedata(conditions)}
+        GameDatabase.input_character_set(characters, newgameid)
+
+        response = make_response(redirect(url_for('game')))
+        response.set_cookie('cookie_game_id', newgameid)
+
+        return response
 
 if __name__ == "__main__":
     app.run(debug=True)
