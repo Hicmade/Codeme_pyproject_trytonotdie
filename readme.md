@@ -45,13 +45,7 @@ Gra wykorzystuje:
 
 
 _Pozostało do zrobienia:_
-* Napisać README **-DONE!**
-* Po pierwsze posprzątać po ostatnim...
-* Naprawić metodę zbierania ziół
-* Dokończyć implementacje kalkulacji wpływu pogody na HP
-* Dodać informację o aktualnie podjętych akcjach i ich rezultacie
-* Zaimplementować "umieranie" postaci
-* Save/load dla podanych Username i Password
+* Wykonać testy: save, load, invalid load credentials - obsługa, load if character is dead, reset
 * Zaimplementować Game Over
 * Zaimplementować Win Game
 

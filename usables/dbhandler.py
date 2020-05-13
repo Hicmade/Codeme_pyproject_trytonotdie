@@ -127,9 +127,9 @@ class GameDatabase:
                 """
         c.execute(query, data)
         conn.commit()
-        res = c.fetchall()
+        res = c.fetchone()
 
-        if len(res) == 0:
+        if res is None:
             query = """
             INSERT INTO Users VALUES (NULL, :user_id, :user_pass, :game_id)
             """
@@ -137,13 +137,37 @@ class GameDatabase:
             conn.commit()
         else:
             query = """
-            UPDATE Users SET GAME_ID = :game_id WHERE USER_ID = :user_id, USER_PASS = :user_pass
+            UPDATE Users SET GAME_ID = :game_id WHERE USER_ID = :user_id AND USER_PASS = :user_pass
             """
             c.execute(query, data)
             conn.commit()
 
         conn.close()
 
+    @staticmethod
+    def load_game(data):
+        conn = sqlite3.connect('./usables/game_data.db')
+        c = conn.cursor()
+        query = """
+                SELECT Game_id FROM Users WHERE User_id = :user_id AND User_pass = :user_pass
+                """
+        c.execute(query, data)
+        conn.commit()
+        res = c.fetchone()
+
+        if res is None:
+            result = "0"
+        else:
+            result = res[0]
+
+        conn.close()
+
+        return result
 
 if __name__ == "__main__":
-    GameDatabase.get_character_set(3)
+    data = {"user_id": "b1",
+            "user_pass": "p1",
+            }
+
+    r = GameDatabase.load_game(data)
+    print(r)
