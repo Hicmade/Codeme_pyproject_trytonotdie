@@ -51,7 +51,7 @@ def game():
     context = {}
     context.update(conditions)
 
-    print(GameControl.check_game(characters, db_game['day']))
+    # print(GameControl.check_game(characters, db_game['day']))
 
     cookie_value = str(gameid['GameID'])
     response = make_response(render_template('game.html', **context, ch=characters, GameID=gameid['GameID']))

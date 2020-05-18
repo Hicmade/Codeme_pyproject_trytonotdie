@@ -174,6 +174,7 @@ class GameControl:
         else:
             return "keep playing"
 
+
 class Character:
     t_doc = {
         'occupation': 'Doctor',
