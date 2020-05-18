@@ -114,9 +114,11 @@ class GameControl:
                 elif value == 'act3':
                     c = Character(db_ch[i]['Ch_occupation'])
                     r = c.construct_hut(supplies['huts'])
+                    start_huts = copy.deepcopy(supplies['huts'])
                     supplies['huts'] = r
+                    print(r)
                     d = copy.deepcopy(db_ch[i])
-                    d.update({'act_txt': f'I raised about {r*100}% of hut!'})
+                    d.update({'act_txt': f'I raised about {round((r-start_huts)*100)}% of hut!'})
                     characters.append(d)
                 elif value == 'act4':
                     c = Character(occup=db_ch[i]['Ch_occupation'], hp=db_ch[i]['Ch_HP'])
@@ -150,6 +152,13 @@ class GameControl:
                 characters[i].update({'act_txt': 'I am dead!'})
 
             i += 1
+
+        # Huts
+        destroy_hut = 0.3 * (weather['rain']+weather['wind'])
+        print(f'destroy {destroy_hut}')
+        supplies['huts'] = round(supplies['huts'] - destroy_hut, 1)
+        if supplies['huts'] < 0:
+            supplies['huts'] = 0
 
         db_game.update(weather)
         db_game.update(supplies)
@@ -258,7 +267,7 @@ class Character:
         return result
 
     def construct_hut(self, now_huts):
-        result = self.basic_fix_construct * self.this_char['fix_constr'] + now_huts
+        result = (self.basic_fix_construct * self.this_char['fix_constr']) + now_huts
         if result > self.max_huts:
             result = self.max_huts
         return result
