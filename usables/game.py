@@ -159,6 +159,21 @@ class GameControl:
         return result
 
 
+    @staticmethod
+    def check_game(characters, day):
+        deaths = 0
+        no_char = len(characters)
+        for x in characters:
+            if x['Ch_HP'] <= 0:
+                deaths = deaths + 1
+
+        if deaths == no_char:
+            return "fail"
+        elif day == 50:
+            return "win"
+        else:
+            return "keep playing"
+
 class Character:
     t_doc = {
         'occupation': 'Doctor',

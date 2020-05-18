@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, get_flashed_messages, \
-    make_response
+    make_response, flash
 from usables.game import GameControl, Character
 from usables.dbhandler import GameDatabase
-
+import hashlib
+from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
-
+app.secret_key = 'slodki_blask_chmury_16_challenge'
 
 @app.route('/', methods=['GET', 'POST'])
 def game():
@@ -14,7 +15,7 @@ def game():
     gameid = {'GameID': request.cookies.get('cookie_game_id')}
 
     if request.method == 'GET':
-        if gameid['GameID'] is None or gameid['GameID'] == 0:
+        if gameid['GameID'] is None or gameid['GameID'] == "0":
             conditions = GameControl().get_initial_conditions()
             characters = GameControl().get_new_characters()
             gameid['GameID'] = GameDatabase.input_gamedata(conditions)
@@ -22,11 +23,14 @@ def game():
         else:
             conditions = GameDatabase.get_gamedata(gameid['GameID'])
             characters = GameDatabase.get_character_set(gameid['GameID'])
+            for x in characters:
+                if x['Ch_HP'] <= 0:
+                    x.update({'act_txt': 'I am dead!'})
 
     elif request.method == 'POST':
         # Gets game conditions and characters referring to GameID
         data = request.form.to_dict()
-        # gameid = {'GameID': data['GameID']} - obsolete, to delete if working
+
         gameid = {'GameID': int(request.cookies.get('cookie_game_id'))}
         db_game = GameDatabase.get_gamedata(gameid['GameID'])
         db_ch = GameDatabase.get_character_set(gameid['GameID'])
@@ -47,6 +51,8 @@ def game():
     context = {}
     context.update(conditions)
 
+    print(GameControl.check_game(characters, db_game['day']))
+
     cookie_value = str(gameid['GameID'])
     response = make_response(render_template('game.html', **context, ch=characters, GameID=gameid['GameID']))
     response.set_cookie(key='cookie_game_id',
@@ -63,6 +69,9 @@ def save():
     if request.method == 'POST':
         gamename = request.form['save_name']
         password = request.form['save_pass']
+        # salt = "34litery"
+        # salted_pass = password + salt
+        # hashed_pass = hashlib.md5(salted_pass.encode())
         gameid = int(request.cookies.get('cookie_game_id'))
 
         conditions = GameDatabase.get_gamedata(gameid)
@@ -90,9 +99,16 @@ def load():
     if request.method == 'POST':
         gamename = request.form['save_name']
         password = request.form['save_pass']
-        credentials = {'user_id' : gamename, 'user_pass' : password}
+        credentials = {'user_id': gamename, 'user_pass': password}
 
+        # data_from_db = GameDatabase.load_game(credentials)
         newgameid = GameDatabase.load_game(credentials)
+        # hashed_password = data_from_db['User_pass']
+
+        if newgameid == "0":
+
+            flash('Wrong game name or password... keep trying :)')
+            return redirect(url_for('load'))
 
         response = make_response(redirect(url_for('game')))
         cookie_value = str(newgameid)
@@ -101,6 +117,7 @@ def load():
 
         return response
 
+
 @app.route("/reset", methods=['get'])
 def reset():
     response = make_response(redirect('/'))
@@ -108,6 +125,6 @@ def reset():
 
     return response
 
+
 if __name__ == "__main__":
     app.run(debug=True)
-

@@ -3,19 +3,6 @@ import sqlite3
 
 class GameDatabase:
 
-    # @staticmethod
-    # def create_db():
-    #     conn = sqlite3.connect('game_data.db')
-    #     c = conn.cursor()
-    #     c.execute("CREATE TABLE MainSave (ID int NOT NULL, character_num, day, food_supl, herb_supl, huts, temp, rain, "
-    #               "rain_txt, wind, wind_txt, ch1_n, ch1_o, ch1_hp, ch2_n, ch2_o, ch2_hp, ch3_n, ch3_o, ch3_hp, "
-    #               "ch4_n, ch4_o, ch4_hp, user_id, user_pass)")
-    #     c.execute("CREATE UNIQUE INDEX id ON MainSave (ID)")
-    #     c.execute("CREATE UNIQUE INDEX usr ON MainSave (user_id)")
-    #     conn.commit()
-    #     conn.close()
-
-
     @staticmethod
     def input_gamedata(data):
         conn = sqlite3.connect('./usables/game_data.db')
@@ -31,7 +18,6 @@ class GameDatabase:
         conn.close()
 
         return game_id
-
 
     @staticmethod
     def get_gamedata(game_id):
@@ -66,7 +52,6 @@ class GameDatabase:
         conn.commit()
 
         conn.close()
-
 
     @staticmethod
     def get_character_set(game_id):
@@ -148,8 +133,11 @@ class GameDatabase:
     def load_game(data):
         conn = sqlite3.connect('./usables/game_data.db')
         c = conn.cursor()
+        # query = """
+        #         SELECT Game_id FROM Users WHERE User_id = :user_id AND User_pass = :user_pass
+        #         """
         query = """
-                SELECT Game_id FROM Users WHERE User_id = :user_id AND User_pass = :user_pass
+                SELECT Game_id FROM Users WHERE User_id = :user_id
                 """
         c.execute(query, data)
         conn.commit()
@@ -163,6 +151,7 @@ class GameDatabase:
         conn.close()
 
         return result
+
 
 if __name__ == "__main__":
     data = {"user_id": "b1",

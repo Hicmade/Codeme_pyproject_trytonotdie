@@ -1,6 +1,8 @@
 TryToNotDie
 ===========
 
+Aplikację uruchamia się plikiem serv.py.
+
 TryToNotDie jest grą przeglądarkową. Gracz otrzymuje 4 lub więcej postaci, które musi utrzymać przy życiu przez
 określoną ilosć dni.
 Każda postać ma predefiniowaną z góry lub losowo przydzielaną profesję, która z kolei ma wpływ na poszczególne zdolności postaci:
@@ -42,10 +44,15 @@ Gra wykorzystuje:
 * Flask
 * Jinja2
 * Sqlite3
+* python 3.8
 
+Dodatkowe informacje
+--------------------
+Autor: Bartosz Kozikowski [Hicmade]
+Mail: kozikowski.bartosz@gmail.com
 
 _Pozostało do zrobienia:_
-* Wykonać testy: save, load, invalid load credentials - obsługa, load if character is dead, reset
+* Hashowanie hasła - za późno weszło, za dużo przerabiania :/
 * Zaimplementować Game Over
 * Zaimplementować Win Game
 
