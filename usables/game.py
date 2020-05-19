@@ -178,7 +178,7 @@ class GameControl:
 
         if deaths == no_char:
             return "fail"
-        elif day == 50:
+        elif day == 45:
             return "win"
         else:
             return "keep playing"

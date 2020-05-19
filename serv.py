@@ -48,7 +48,11 @@ def game():
 
         conditions.update(db_game)
 
-        print(GameControl.check_game(characters, db_game['day']))
+        game_state = GameControl.check_game(characters, db_game['day'])
+        if game_state =='win':
+            return "You Win!"
+        elif game_state == 'fail':
+            return "You failed..."
 
     context = {}
     context.update(conditions)
