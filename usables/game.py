@@ -304,9 +304,12 @@ class Character:
             food_factor = self.this_char['food_cons'] - food
 
         change_hp = round(((temp_factor * self.this_char['cold_proof']) + rain + wind +
-                                       food_factor - huts) * self.this_char['health_los'])
+            food_factor - huts) * self.this_char['health_los'])
+
         print(f'Change hp: {change_hp}')
         self.this_char['HP'] -= change_hp
+        if self.this_char['HP'] > 100:
+            self.this_char['HP'] = 100
 
         return self.this_char['HP']
 
