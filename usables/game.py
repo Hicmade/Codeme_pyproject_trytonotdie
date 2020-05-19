@@ -154,7 +154,7 @@ class GameControl:
             i += 1
 
         # Huts
-        destroy_hut = 0.3 * (weather['rain']+weather['wind'])
+        destroy_hut = 0.1 * (weather['rain']+weather['wind'])
         print(f'destroy {destroy_hut}')
         supplies['huts'] = round(supplies['huts'] - destroy_hut, 1)
         if supplies['huts'] < 0:
@@ -187,7 +187,7 @@ class GameControl:
 class Character:
     t_doc = {
         'occupation': 'Doctor',
-        'health_reg': 1.5,
+        'health_reg': 7.5,
         'health_los': 0.5,
         'heal': 4,
         'food_cons': 1,
@@ -200,11 +200,11 @@ class Character:
 
     t_ran = {
         'occupation': 'Ranger',
-        'health_reg': 1.5,
+        'health_reg': 7.5,
         'health_los': 0.5,
         'heal': 2,
         'food_cons': 1.5,
-        'hunt_eff': 4,
+        'hunt_eff': 2,
         'cold_proof': 0.5,
         'fix_constr': 2,
         'gather': 1,
@@ -213,11 +213,11 @@ class Character:
 
     t_eng = {
         'occupation': 'Engineer',
-        'health_reg': 1,
+        'health_reg': 5,
         'health_los': 1,
         'heal': 1,
         'food_cons': 1.2,
-        'hunt_eff': 2,
+        'hunt_eff': 1.5,
         'cold_proof': 1,
         'fix_constr': 4,
         'gather': 1,
@@ -226,7 +226,7 @@ class Character:
 
     t_inf = {
         'occupation': 'Influencer',
-        'health_reg': 1.2,
+        'health_reg': 5,
         'health_los': 1.2,
         'heal': 1,
         'food_cons': 1,
@@ -295,7 +295,7 @@ class Character:
         temp_factor = 0
         food_factor = 0
 
-        if math.fabs(temp-20) > 8:
+        if 15 >= math.fabs(temp-20) > 8:
             temp_factor = 2
         elif math.fabs(temp-20) > 15:
             temp_factor = 3
@@ -303,8 +303,10 @@ class Character:
         if food < self.this_char['food_cons']:
             food_factor = self.this_char['food_cons'] - food
 
-        self.this_char['HP'] -= round(((temp_factor * self.this_char['cold_proof']) + rain + wind +
+        change_hp = round(((temp_factor * self.this_char['cold_proof']) + rain + wind +
                                        food_factor - huts) * self.this_char['health_los'])
+        print(f'Change hp: {change_hp}')
+        self.this_char['HP'] -= change_hp
 
         return self.this_char['HP']
 
