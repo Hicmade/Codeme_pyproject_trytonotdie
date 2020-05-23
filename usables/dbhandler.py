@@ -27,13 +27,17 @@ class GameDatabase:
         SELECT * FROM GameSave WHERE ID = :ID
         """
         gameid = {'ID': game_id}
-        c.execute(query, gameid)
-        conn.commit()
+        try:
+            c.execute(query, gameid)
+            conn.commit()
 
-        values = c.fetchall()
-        result = dict(zip([c[0] for c in c.description], values[0]))
-
-        conn.close()
+            values = c.fetchall()
+            result = dict(zip([c[0] for c in c.description], values[0]))
+        except sqlite3.OperationalError:
+            print("Operational error occured")
+            result = "0"
+        finally:
+            conn.close()
 
         return result
 

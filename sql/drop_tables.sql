@@ -1,0 +1,5 @@
+PRAGMA foreign_keys = ON;
+
+DROP TABLE IF EXISTS "CharacterSet";
+DROP TABLE IF EXISTS "GameSave";
+DROP TABLE IF EXISTS "Users";

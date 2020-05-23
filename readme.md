@@ -1,7 +1,8 @@
 TryToNotDie
 ===========
 
-Aplikację uruchamia się plikiem serv.py.
+W pierwszym kroku należy zainicjować bazę danych do przechowywania danych gry - uruchamiając **"database_init.py"** w głównym katalogu.
+Następnie aplikację uruchamia się plikiem **"serv.py"**.
 
 TryToNotDie jest grą przeglądarkową. Gracz otrzymuje 4 lub więcej postaci, które musi utrzymać przy życiu przez
 określoną ilosć dni.
@@ -46,6 +47,8 @@ Gra wykorzystuje:
 * Sqlite3
 * python 3.8
 
+pip install -r requirements.txt
+
 Dodatkowe informacje
 --------------------
 Autor: Bartosz Kozikowski [Hicmade]
@@ -53,8 +56,6 @@ Mail: kozikowski.bartosz@gmail.com
 
 _Pozostało do zrobienia:_
 * Hashowanie hasła - za późno weszło, za dużo przerabiania :/
-* Zaimplementować Game Over
-* Zaimplementować Win Game
 
 Kiedyś:
 * Porządnie przetestować narzucone parametry / wyważyć grę (testy, testy, testy)

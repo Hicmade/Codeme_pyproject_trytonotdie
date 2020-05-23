@@ -22,6 +22,11 @@ def game():
             GameDatabase.input_character_set(characters, gameid)
         else:
             conditions = GameDatabase.get_gamedata(gameid['GameID'])
+            if conditions == "0":
+                response = make_response(redirect(url_for('game')))
+                response.set_cookie(key='cookie_game_id', value="0")
+                return response
+
             characters = GameDatabase.get_character_set(gameid['GameID'])
             for x in characters:
                 if x['Ch_HP'] <= 0:
